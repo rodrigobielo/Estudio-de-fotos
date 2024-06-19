@@ -1,0 +1,48 @@
+<?php
+class FotografoModel {
+    private $db;
+
+    public function __construct($db) {
+        $this->db = $db;
+    }
+
+    public function getAllFotografos($searchTerm = '') {
+        $sql = "SELECT * FROM fotografo";
+        if (!empty($searchTerm)) {
+            $sql .= " WHERE nombre LIKE '%$searchTerm%' OR apellidos LIKE '%$searchTerm%'";
+        }
+        $result = $this->db->query($sql);
+        $fotografos = [];
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $fotografos[] = $row;
+            }
+        }
+        return $fotografos;
+    }
+
+
+
+    public function delete($id) {
+        // Conectar a la base de datos usando la configuración de database.php
+        $db = $this->connectDB();
+    
+        // Preparar la consulta SQL para eliminar un fotógrafo por su id
+        $sql = "DELETE FROM fotografo WHERE idFotografo = :id";
+    
+        // Vincular el identificador a la consulta
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':id', $id);
+    
+        // Ejecutar la consulta para eliminar el registro
+        $stmt->execute();
+    
+        // Cerrar la conexión a la base de datos
+        $db = null;
+    
+        // Redireccionar a la página principal o mostrar un mensaje de confirmación (opcional)
+        header('Location: index.php');
+    }
+    
+}
+?>
